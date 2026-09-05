@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkillStudio Design QA</title>
+    <style>
+      * { box-sizing: border-box; }
+      body { margin: 0; background: #05080c; color: #d8e1ea; font-family: Inter, "Segoe UI", sans-serif; }
+      header { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; border-bottom: 1px solid #202a35; }
+      header strong { font-size: 13px; } header span { color: #73808e; font-size: 11px; }
+      main { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 14px; }
+      figure { margin: 0; border: 1px solid #273340; border-radius: 8px; overflow: hidden; background: #0b1016; }
+      figcaption { height: 36px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 10px; color: #9aa7b4; border-bottom: 1px solid #273340; }
+      img { display: block; width: 100%; aspect-ratio: 1440 / 1024; object-fit: contain; object-position: top; background: #090d12; }
+    </style>
+  </head>
+  <body>
+    <header><strong>SkillStudio · 方案 3 视觉对照</strong><span>归一化画布：1440 × 1024 CSS px</span></header>
+    <main>
+      <figure><figcaption><span>视觉基准</span><span>1487 × 1058 px</span></figcaption><img src="/qa/source-option-3.png" alt="方案 3 视觉基准" /></figure>
+      <figure><figcaption><span>实现结果</span><span>1440 × 1024 px</span></figcaption><img src="/qa/implementation.png" alt="实现截图" /></figure>
+    </main>
+  </body>
+</html>
