@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "tsx --test tests/*.test.ts",
-    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "typecheck": "tsc -b --noEmit",
     "build": "npm run typecheck && npm run build --workspaces --if-present",
     "dev:connector": "npm run dev --workspace=@skillstudio/connector",
     "dev:web": "npm run dev --workspace=@skillstudio/web"
