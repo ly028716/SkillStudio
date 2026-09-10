@@ -5,7 +5,7 @@ import {
   CONTRACT_SCHEMA_VERSION,
   createEnvelope,
   type FactStatus,
-} from "../packages/contracts/src/index.ts";
+} from "@skillstudio/contracts";
 
 test("exports the M0 contract schema version", () => {
   assert.equal(CONTRACT_SCHEMA_VERSION, "2026-09-10");
