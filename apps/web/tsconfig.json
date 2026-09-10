@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "jsx": "react-jsx",
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/web.tsbuildinfo"
+  },
+  "include": [
+    "package.json",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts"
+  ]
+}

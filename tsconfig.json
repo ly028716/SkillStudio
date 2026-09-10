@@ -3,5 +3,19 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "files": []
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/connector"
+    },
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./packages/contracts"
+    },
+    {
+      "path": "./packages/harness-core"
+    }
+  ]
 }

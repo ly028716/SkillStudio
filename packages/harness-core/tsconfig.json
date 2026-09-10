@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/harness-core.tsbuildinfo"
+  },
+  "include": [
+    "package.json",
+    "src/**/*.ts"
+  ]
+}
