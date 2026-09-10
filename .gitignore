@@ -1,2 +1,9 @@
 .worktrees/
 .superpowers/sdd/
+node_modules/
+dist/
+.vite/
+coverage/
+.env
+.env.*
+apps/connector/skillstudio.config.json
