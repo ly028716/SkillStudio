@@ -3,24 +3,7 @@ import type { HarnessDiscoveryPort } from "@skillstudio/contracts";
 
 import { createHarnessesService } from "./harnesses/service.js";
 import { createConnectorServer } from "./http/server.js";
-
-const DEFAULT_PORT = 4317;
-
-function configuredPort(value: string | undefined): number {
-  if (value === undefined || value === "") {
-    return DEFAULT_PORT;
-  }
-
-  if (!/^\d+$/.test(value)) {
-    throw new Error("SKILLSTUDIO_PORT must be an integer from 1024 through 65535.");
-  }
-
-  const port = Number(value);
-  if (!Number.isSafeInteger(port) || port < 1024 || port > 65535) {
-    throw new Error("SKILLSTUDIO_PORT must be an integer from 1024 through 65535.");
-  }
-  return port;
-}
+import { parseConnectorPort } from "./port.js";
 
 const nonExecutingDiscoveryPort: HarnessDiscoveryPort = {
   find: async () => null,
@@ -31,7 +14,7 @@ const nonExecutingDiscoveryPort: HarnessDiscoveryPort = {
   now: () => new Date().toISOString(),
 };
 
-const port = configuredPort(process.env.SKILLSTUDIO_PORT);
+const port = parseConnectorPort(process.env.SKILLSTUDIO_PORT);
 const harnesses = createHarnessesService({
   discoverHarnesses: () => discoverHarnesses(nonExecutingDiscoveryPort, {
     hermesSourceCheckout: null,

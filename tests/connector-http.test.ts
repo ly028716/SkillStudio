@@ -78,15 +78,15 @@ test("returns a JSON NOT_FOUND error for missing paths", async () => {
   });
 });
 
-test("rejects non-GET requests with safe JSON headers", async () => {
+test("returns NOT_FOUND for non-GET requests with safe JSON headers", async () => {
   await withConnector(async (baseUrl) => {
     const response = await fetch(`${baseUrl}/api/health`, { method: "POST" });
 
-    assert.equal(response.status, 405);
+    assert.equal(response.status, 404);
     assertSafeJsonHeaders(response);
     assert.deepEqual(await response.json(), {
-      code: "INVALID_REQUEST",
-      message: "Only GET requests are supported.",
+      code: "NOT_FOUND",
+      message: "The requested endpoint was not found.",
       requestId: "request-123",
     });
   });

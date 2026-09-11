@@ -42,14 +42,6 @@ function notFound(requestId: string): { code: "NOT_FOUND"; message: string; requ
   };
 }
 
-function invalidMethod(requestId: string): { code: "INVALID_REQUEST"; message: string; requestId: string } {
-  return {
-    code: "INVALID_REQUEST",
-    message: "Only GET requests are supported.",
-    requestId,
-  };
-}
-
 export function createConnectorServer(options: ConnectorServerOptions): ConnectorServer {
   const requestId = options.requestId ?? randomUUID;
   const harnesses = options.harnesses ?? createHarnessesService({
@@ -60,7 +52,7 @@ export function createConnectorServer(options: ConnectorServerOptions): Connecto
     const pathname = new URL(request.url ?? "/", `http://${LOOPBACK_ADDRESS}`).pathname;
 
     if (request.method !== "GET") {
-      writeJson(response, 405, invalidMethod(id));
+      writeJson(response, 404, notFound(id));
       return;
     }
 
