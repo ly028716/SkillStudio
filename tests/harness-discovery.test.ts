@@ -23,6 +23,7 @@ async function fixture(name: string): Promise<string> {
 }
 
 function createPort(options: {
+  codexPath?: string | null;
   codexVersion: string;
   pythonVersion: string | null;
   sourceFiles: Record<string, string>;
@@ -33,7 +34,11 @@ function createPort(options: {
     calls,
     async find(command) {
       calls.push(`find:${command}`);
-      return command === "codex" ? "C:\\Tools\\codex.exe" : null;
+      return command === "codex"
+        ? "codexPath" in options
+          ? options.codexPath
+          : "C:\\Tools\\codex.exe"
+        : null;
     },
     async version(commandPath) {
       calls.push(`version:${commandPath}`);
@@ -113,4 +118,25 @@ test("keeps a malformed Codex version unknown without blocking discovery", async
   assert.equal(fact(codex, "version").status, "unknown");
   assert.notEqual(fact(codex, "version").status, "blocked");
   assert.equal(fact(codex, "installation").status, "ready");
+});
+
+test("marks all harnesses not installed when executables and source checkouts are absent", async () => {
+  const port = createPort({
+    codexPath: null,
+    codexVersion: await fixture("codex-unknown-version.txt"),
+    pythonVersion: null,
+    sourceFiles: {},
+  });
+
+  const reports = await discoverHarnesses(port, {
+    hermesSourceCheckout: null,
+    deepseekSourceCheckout: null,
+  });
+
+  assert.deepEqual(reports.map((report) => report.kind), ["codex", "hermes", "deepseek"]);
+  for (const report of reports) {
+    assert.equal(fact(report, "installation").status, "not_installed");
+  }
+  assert.deepEqual(port.calls.filter((call) => call.startsWith("version:")), []);
+  assert.deepEqual(port.calls.filter((call) => call === "pythonVersion"), []);
 });
