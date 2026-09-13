@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import type { CapabilityFact, FactStatus, HarnessReport } from "@skillstudio/contracts";
 import { getHarnessReports } from "./api/client.js";
 
-const connectorBaseUrl = import.meta.env.VITE_CONNECTOR_BASE_URL ?? "";
+const connectorBaseUrl = import.meta.env?.VITE_CONNECTOR_BASE_URL ?? "";
 
 const statusDetails: Record<FactStatus, { label: string; tone: string; symbol: string }> = {
   ready: { label: "已就绪", tone: "ready", symbol: "●" },
@@ -24,7 +24,7 @@ function factFor(report: HarnessReport, key: CapabilityFact["key"]): CapabilityF
   return report.facts.find((fact) => fact.key === key);
 }
 
-function reportHeadline(report: HarnessReport): string {
+export function reportHeadline(report: HarnessReport): string {
   const installation = factFor(report, "installation");
   const execution = factFor(report, "execution");
 
@@ -32,7 +32,11 @@ function reportHeadline(report: HarnessReport): string {
     return "Hermes Agent · 已发现，运行时受阻";
   }
 
-  if (report.kind === "deepseek" && installation?.summary.includes("source checkout was verified")) {
+  if (
+    report.kind === "deepseek"
+    && installation?.summary.includes("source checkout was verified")
+    && execution?.status === "unsupported"
+  ) {
     return "DeepSeek Harness · 已发现源码，仅静态诊断";
   }
 
