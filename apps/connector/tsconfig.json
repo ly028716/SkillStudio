@@ -22,5 +22,13 @@
   "include": [
     "package.json",
     "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/contracts"
+    },
+    {
+      "path": "../../packages/harness-core"
+    }
   ]
 }

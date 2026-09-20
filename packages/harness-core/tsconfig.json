@@ -19,5 +19,10 @@
   "include": [
     "package.json",
     "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../contracts"
+    }
   ]
 }

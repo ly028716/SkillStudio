@@ -14,5 +14,10 @@
     "src/**/*.tsx",
     "vite.config.ts",
     "../../packages/contracts/src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../../packages/contracts"
+    }
   ]
 }
