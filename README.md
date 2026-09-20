@@ -78,8 +78,10 @@ SkillStudio 是一个运行在本机的 Web 工作台，服务于两类用户：
 4. 本地团队共享与私有仓库同步。
 5. 云端市场与组织治理能力。
 
-## 开发状态
+## M0 开发状态
 
-项目当前处于 MVP 设计阶段，尚未初始化应用代码和本地开发命令。
+M0 已提供本地 Harness 能力状态页、回环 Connector 和共享发现契约。它的目标是展示可复核的安装、版本、执行与 Skill 发现证据，不是启动 Harness 或运行 Skill。
 
-后续实现将从本地连接器的目录注册、Skill 扫描与解析开始，再接入前端浏览和编辑体验，最后实现 Codex CLI 的受控运行。
+当前范围严格限定为只读诊断：Connector 仅监听 `127.0.0.1`，不访问用户 Skill 文件；Codex 的命令与版本有实测证据，Hermes 仅有源码版本证据且运行时仍需验证，DeepSeek 仅提供静态兼容性诊断并在 M0 标记为不支持执行。
+
+开发命令和本地启动方式见 [M0 开发说明](docs/development.md)，能力结论与原始探针记录见 [ADR 0001：M0 Harness 能力基线](docs/decisions/0001-harness-capability-baseline.md)。

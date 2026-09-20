@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@skillstudio/contracts": [
+        "../contracts/dist/index.d.ts"
+      ]
+    },
+    "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/harness-core.tsbuildinfo"
+  },
+  "include": [
+    "package.json",
+    "src/**/*.ts"
+  ]
+}

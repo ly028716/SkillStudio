@@ -1,0 +1,20 @@
+{
+  "name": "@skillstudio/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b --force && vite build"
+  },
+  "dependencies": {
+    "@skillstudio/contracts": "file:../../packages/contracts",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "vite": "^7.1.6"
+  }
+}

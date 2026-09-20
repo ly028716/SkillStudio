@@ -1,0 +1,14 @@
+{
+  "name": "@skillstudio/connector",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@skillstudio/contracts": "file:../../packages/contracts",
+    "@skillstudio/harness-core": "file:../../packages/harness-core"
+  }
+}

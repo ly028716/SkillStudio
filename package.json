@@ -1,0 +1,22 @@
+{
+  "name": "skillstudio",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc -b --noEmit",
+    "build": "npm run typecheck && npm run build --workspaces --if-present",
+    "dev:connector": "npm run dev --workspace=@skillstudio/connector",
+    "dev:web": "npm run dev --workspace=@skillstudio/web"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "tsx": "^4.23.13",
+    "typescript": "^7.0.2"
+  }
+}

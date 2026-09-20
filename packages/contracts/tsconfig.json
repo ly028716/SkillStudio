@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/contracts.tsbuildinfo"
+  },
+  "include": [
+    "package.json",
+    "src/**/*.ts"
+  ]
+}

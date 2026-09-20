@@ -1,0 +1,10 @@
+{
+  "harnesses": {
+    "hermes": {
+      "sourceCheckout": "C:\\path\\to\\hermes-agent"
+    },
+    "deepseek": {
+      "sourceCheckout": "C:\\path\\to\\deepseek-harness"
+    }
+  }
+}

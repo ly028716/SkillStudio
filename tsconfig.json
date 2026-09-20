@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./apps/connector"
+    },
+    {
+      "path": "./apps/web"
+    },
+    {
+      "path": "./packages/contracts"
+    },
+    {
+      "path": "./packages/harness-core"
+    }
+  ]
+}
