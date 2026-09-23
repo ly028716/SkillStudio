@@ -6,6 +6,9 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "types": ["vite/client"],
+    "paths": {
+      "@skillstudio/skill-core": ["../../packages/skill-core/dist/index.d.ts"]
+    },
     "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/web.tsbuildinfo"
   },
   "include": [
@@ -18,6 +21,9 @@
   "references": [
     {
       "path": "../../packages/contracts"
+    },
+    {
+      "path": "../../packages/skill-core"
     }
   ]
 }

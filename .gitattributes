@@ -1,0 +1,2 @@
+# Keep Markdown portable and consistently rendered by GitHub.
+*.md text eol=lf

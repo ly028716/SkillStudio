@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@skillstudio/contracts": "file:../../packages/contracts",
-    "@skillstudio/harness-core": "file:../../packages/harness-core"
+    "@skillstudio/harness-core": "file:../../packages/harness-core",
+    "@skillstudio/skill-core": "file:../../packages/skill-core"
   }
 }

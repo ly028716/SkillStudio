@@ -8,7 +8,7 @@ import {
 } from "@skillstudio/contracts";
 
 test("exports the M0 contract schema version", () => {
-  assert.equal(CONTRACT_SCHEMA_VERSION, "2026-09-10");
+  assert.equal(CONTRACT_SCHEMA_VERSION, "2026-09-23");
 });
 
 test("creates a versioned API envelope", () => {
@@ -16,7 +16,7 @@ test("creates a versioned API envelope", () => {
   assert.equal(factStatus, "ready");
 
   assert.deepEqual(createEnvelope("req-1", { status: "ok" }), {
-    schemaVersion: "2026-09-10",
+    schemaVersion: "2026-09-23",
     requestId: "req-1",
     data: { status: "ok" },
   });

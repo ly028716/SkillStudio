@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/skill-core.tsbuildinfo"
+  },
+  "include": ["package.json", "src/**/*.ts"],
+  "references": [{ "path": "../contracts" }]
+}

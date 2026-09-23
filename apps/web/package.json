@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@skillstudio/contracts": "file:../../packages/contracts",
+    "@skillstudio/skill-core": "file:../../packages/skill-core",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },

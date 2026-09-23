@@ -20,7 +20,7 @@ function fact(
 
 const reports: HarnessReport[] = [
   {
-    schemaVersion: "2026-09-10",
+    schemaVersion: "2026-09-23",
     kind: "codex",
     displayName: "Codex",
     executablePath: "C:\\Tools\\codex.exe",
@@ -33,7 +33,7 @@ const reports: HarnessReport[] = [
     ],
   },
   {
-    schemaVersion: "2026-09-10",
+    schemaVersion: "2026-09-23",
     kind: "hermes",
     displayName: "Hermes Agent",
     executablePath: null,
@@ -46,7 +46,7 @@ const reports: HarnessReport[] = [
     ],
   },
   {
-    schemaVersion: "2026-09-10",
+    schemaVersion: "2026-09-23",
     kind: "deepseek",
     displayName: "DeepSeek Harness",
     executablePath: null,
@@ -82,7 +82,7 @@ test("returns reports from the versioned Connector envelope", async () => {
   const fetchImpl: typeof fetch = async (input, init) => {
     request = { url: String(input), init };
     return response({
-      schemaVersion: "2026-09-10",
+      schemaVersion: "2026-09-23",
       requestId: "request-123",
       data: reports,
     });
@@ -91,10 +91,8 @@ test("returns reports from the versioned Connector envelope", async () => {
   const result = await getHarnessReports(fetchImpl, "http://127.0.0.1:4317");
 
   assert.deepEqual(result, reports);
-  assert.deepEqual(request, {
-    url: "http://127.0.0.1:4317/api/harnesses",
-    init: { headers: { Accept: "application/json" } },
-  });
+  assert.equal(request?.url, "http://127.0.0.1:4317/api/harnesses");
+  assert.equal(new Headers(request?.init?.headers).get("accept"), "application/json");
 });
 
 test("rejects non-success Connector responses", async () => {
@@ -107,7 +105,7 @@ test("rejects non-success Connector responses", async () => {
 test("rejects envelopes without a report array", async () => {
   await assert.rejects(
     getHarnessReports(
-      async () => response({ schemaVersion: "2026-09-10", requestId: "request-123", data: {} }),
+      async () => response({ schemaVersion: "2026-09-23", requestId: "request-123", data: {} }),
       "http://127.0.0.1:4317",
     ),
     client.ConnectorUnavailableError,
@@ -137,7 +135,7 @@ test("rejects malformed Harness reports and capability facts from a successful e
   for (const malformedReport of malformedReports) {
     await assert.rejects(
       getHarnessReports(
-        async () => response({ schemaVersion: "2026-09-10", requestId: "request-123", data: [malformedReport] }),
+        async () => response({ schemaVersion: "2026-09-23", requestId: "request-123", data: [malformedReport] }),
         "http://127.0.0.1:4317",
       ),
       assertUnavailable,
@@ -185,9 +183,11 @@ test("renders evidence-backed Hermes and DeepSeek capability headlines", () => {
   assert.equal(reportHeadline(reports[2]!), "DeepSeek Harness · 已发现源码，仅静态诊断");
 });
 
-test("renders the display-only loading state before Connector results arrive", () => {
+test("requires pairing before showing local Connector data", () => {
   const markup = renderToStaticMarkup(createElement(statusScreen.App));
 
-  assert.match(markup, /正在读取本地发现证据/);
+  assert.match(markup, /一次性配对码/);
+  assert.match(markup, /安全连接/);
+  assert.doesNotMatch(markup, /正在读取本地发现证据/);
   assert.doesNotMatch(markup, /API.?key|开始执行|运行 Harness/i);
 });

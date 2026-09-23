@@ -25,9 +25,11 @@ test("declares workspace dependency references for clean TypeScript builds", asy
   assert.deepEqual(await readReferences("apps/connector/tsconfig.json"), [
     "../../packages/contracts",
     "../../packages/harness-core",
+    "../../packages/skill-core",
   ]);
   assert.deepEqual(await readReferences("apps/web/tsconfig.json"), [
     "../../packages/contracts",
+    "../../packages/skill-core",
   ]);
 
   const packageJson = JSON.parse(

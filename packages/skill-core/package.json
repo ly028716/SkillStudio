@@ -1,0 +1,20 @@
+{
+  "name": "@skillstudio/skill-core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@skillstudio/contracts": "file:../contracts",
+    "yaml": "2.9.0"
+  }
+}

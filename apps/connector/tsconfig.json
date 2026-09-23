@@ -15,6 +15,9 @@
       ],
       "@skillstudio/harness-core": [
         "../harness-core/dist/index.d.ts"
+      ],
+      "@skillstudio/skill-core": [
+        "../skill-core/dist/index.d.ts"
       ]
     },
     "tsBuildInfoFile": "../../node_modules/.cache/skillstudio/connector.tsbuildinfo"
@@ -29,6 +32,9 @@
     },
     {
       "path": "../../packages/harness-core"
+    },
+    {
+      "path": "../../packages/skill-core"
     }
   ]
 }

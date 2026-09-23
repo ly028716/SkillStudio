@@ -1,9 +1,12 @@
 import { discoverHarnesses } from "@skillstudio/harness-core";
 import type { HarnessDiscoveryPort } from "@skillstudio/contracts";
 
+import { ConnectorSession } from "./auth/session.js";
 import { createHarnessesService } from "./harnesses/service.js";
 import { createConnectorServer } from "./http/server.js";
 import { parseConnectorPort } from "./port.js";
+import { SkillRepository } from "./skills/repository.js";
+import { LocalStateStore } from "./state/local-state.js";
 
 const nonExecutingDiscoveryPort: HarnessDiscoveryPort = {
   find: async () => null,
@@ -21,8 +24,17 @@ const harnesses = createHarnessesService({
     deepseekSourceCheckout: null,
   }),
 });
-const connector = createConnectorServer({ port, harnesses });
+const session = new ConnectorSession();
+const skills = new SkillRepository(new LocalStateStore());
 
-void connector.listen().then((listeningPort) => {
-  process.stdout.write(`SkillStudio connector listening on http://127.0.0.1:${listeningPort}\n`);
+void skills.restore().then(() => {
+  const connector = createConnectorServer({ port, harnesses, session, skills });
+  return connector.listen().then((listeningPort) => {
+    process.stdout.write(`SkillStudio connector listening on http://127.0.0.1:${listeningPort}\n`);
+    process.stdout.write(`Browser pairing code (valid for 30 minutes, one use): ${session.pairingCode}\n`);
+  });
+}).catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : "未知错误";
+  process.stderr.write(`SkillStudio connector could not restore local state: ${message}\n`);
+  process.exitCode = 1;
 });

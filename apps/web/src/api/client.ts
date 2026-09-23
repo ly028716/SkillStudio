@@ -2,7 +2,13 @@ import {
   CONTRACT_SCHEMA_VERSION,
   type ApiEnvelope,
   type CapabilityFact,
+  type CreateSkillRequest,
   type HarnessReport,
+  type RootScanResult,
+  type SaveSkillRequest,
+  type SkillDetail,
+  type SkillRoot,
+  type SkillSummary,
 } from "@skillstudio/contracts";
 
 const harnessKinds = new Set<HarnessReport["kind"]>(["codex", "hermes", "deepseek"]);
@@ -25,6 +31,123 @@ export class ConnectorUnavailableError extends Error {
     super("无法连接本地连接器");
     this.name = "ConnectorUnavailableError";
   }
+}
+
+export class ConnectorRequestError extends Error {
+  constructor(readonly status: number, message: string, readonly currentVersion?: string) {
+    super(message);
+    this.name = "ConnectorRequestError";
+  }
+}
+
+const SESSION_KEY = "skillstudio.connector.paired";
+
+function hasPairedSessionMarker(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.sessionStorage.getItem(SESSION_KEY) === "1";
+}
+
+async function request<T>(
+  fetchImpl: typeof fetch,
+  baseUrl: string,
+  pathname: string,
+  init: RequestInit = {},
+): Promise<T> {
+  const headers = new Headers(init.headers);
+  headers.set("Accept", "application/json");
+  if (init.body !== undefined) headers.set("Content-Type", "application/json");
+  let response: Response;
+  try {
+    response = await fetchImpl(`${resolveConnectorBaseUrl(baseUrl)}${pathname}`, { ...init, headers });
+  } catch {
+    throw new ConnectorUnavailableError();
+  }
+
+  if (response.status === 401) {
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem(SESSION_KEY);
+      window.dispatchEvent(new Event("skillstudio:session-expired"));
+    }
+    throw new ConnectorRequestError(401, "连接器会话已失效，请重新配对。");
+  }
+  if (!response.ok) {
+    let message = "本地连接器请求失败。";
+    let currentVersion: string | undefined;
+    try {
+      const error = await response.json() as { message?: unknown; details?: { currentVersion?: unknown } };
+      if (typeof error.message === "string") message = error.message;
+      if (typeof error.details?.currentVersion === "string") currentVersion = error.details.currentVersion;
+    } catch {
+      // Keep the localized fallback for non-JSON responses.
+    }
+    throw new ConnectorRequestError(response.status, message, currentVersion);
+  }
+
+  const envelope = await response.json() as ApiEnvelope<T>;
+  if (envelope.schemaVersion !== CONTRACT_SCHEMA_VERSION || !("data" in envelope)) {
+    throw new ConnectorUnavailableError();
+  }
+  return envelope.data;
+}
+
+export async function connectWithPairingCode(fetchImpl: typeof fetch, baseUrl: string, pairingCode: string): Promise<void> {
+  const data = await request<{ connected: boolean }>(
+    fetchImpl,
+    baseUrl,
+    "/api/bootstrap",
+    { method: "POST", body: JSON.stringify({ pairingCode }) },
+  );
+  if (data.connected !== true || typeof window === "undefined") {
+    throw new ConnectorUnavailableError();
+  }
+  window.sessionStorage.setItem(SESSION_KEY, "1");
+}
+
+export function hasConnectorSession(): boolean {
+  return hasPairedSessionMarker();
+}
+
+export async function getRoots(fetchImpl: typeof fetch, baseUrl: string): Promise<SkillRoot[]> {
+  return request(fetchImpl, baseUrl, "/api/roots");
+}
+
+export async function addRoot(fetchImpl: typeof fetch, baseUrl: string, path: string, writeEnabled = false): Promise<RootScanResult> {
+  return request(fetchImpl, baseUrl, "/api/roots", { method: "POST", body: JSON.stringify({ path, writeEnabled }) });
+}
+
+export async function removeRoot(fetchImpl: typeof fetch, baseUrl: string, rootId: string): Promise<void> {
+  await request(fetchImpl, baseUrl, `/api/roots/${encodeURIComponent(rootId)}`, { method: "DELETE" });
+}
+
+export async function scanRoot(fetchImpl: typeof fetch, baseUrl: string, rootId: string): Promise<RootScanResult> {
+  return request(fetchImpl, baseUrl, `/api/roots/${encodeURIComponent(rootId)}/scan`, { method: "POST" });
+}
+
+export async function getSkills(
+  fetchImpl: typeof fetch,
+  baseUrl: string,
+  options: { query?: string; rootId?: string } = {},
+): Promise<SkillSummary[]> {
+  const query = new URLSearchParams();
+  if (options.query !== undefined) query.set("q", options.query);
+  if (options.rootId !== undefined) query.set("rootId", options.rootId);
+  const suffix = query.size === 0 ? "" : `?${query.toString()}`;
+  return request(fetchImpl, baseUrl, `/api/skills${suffix}`);
+}
+
+export async function getSkill(fetchImpl: typeof fetch, baseUrl: string, skillId: string): Promise<SkillDetail> {
+  return request(fetchImpl, baseUrl, `/api/skills/${encodeURIComponent(skillId)}`);
+}
+
+export async function createSkill(fetchImpl: typeof fetch, baseUrl: string, input: CreateSkillRequest): Promise<SkillDetail> {
+  return request(fetchImpl, baseUrl, "/api/skills", { method: "POST", body: JSON.stringify(input) });
+}
+
+export async function saveSkill(fetchImpl: typeof fetch, baseUrl: string, skillId: string, input: SaveSkillRequest): Promise<SkillDetail> {
+  return request(fetchImpl, baseUrl, `/api/skills/${encodeURIComponent(skillId)}/content`, {
+    method: "PUT",
+    body: JSON.stringify(input),
+  });
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -89,20 +212,12 @@ export async function getHarnessReports(
   baseUrl: string,
 ): Promise<HarnessReport[]> {
   try {
-    const response = await fetchImpl(`${resolveConnectorBaseUrl(baseUrl)}/api/harnesses`, {
-      headers: { Accept: "application/json" },
-    });
-
-    if (!response.ok) {
+    const reports = await request<unknown>(fetchImpl, baseUrl, "/api/harnesses");
+    if (!Array.isArray(reports) || !reports.every(isHarnessReport)) {
       throw new ConnectorUnavailableError();
     }
 
-    const envelope: ApiEnvelope<unknown> = await response.json();
-    if (!Array.isArray(envelope.data) || !envelope.data.every(isHarnessReport)) {
-      throw new ConnectorUnavailableError();
-    }
-
-    return envelope.data;
+    return reports;
   } catch (error) {
     if (error instanceof ConnectorUnavailableError) {
       throw error;

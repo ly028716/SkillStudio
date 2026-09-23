@@ -5,7 +5,7 @@ import { type HarnessReport } from "@skillstudio/contracts";
 import { createConnectorServer } from "../apps/connector/src/http/server.js";
 
 const reports: HarnessReport[] = ["codex", "hermes", "deepseek"].map((kind) => ({
-  schemaVersion: "2026-09-10",
+  schemaVersion: "2026-09-23",
   kind: kind as HarnessReport["kind"],
   displayName: `${kind} Harness`,
   executablePath: null,
@@ -43,7 +43,7 @@ test("returns the exact versioned health envelope with an injected request id", 
     assert.equal(response.status, 200);
     assertSafeJsonHeaders(response);
     assert.deepEqual(await response.json(), {
-      schemaVersion: "2026-09-10",
+      schemaVersion: "2026-09-23",
       requestId: "request-123",
       data: { status: "ok" },
     });
@@ -57,7 +57,7 @@ test("returns three injected harness reports through the loopback API", async ()
     assert.equal(response.status, 200);
     assertSafeJsonHeaders(response);
     assert.deepEqual(await response.json(), {
-      schemaVersion: "2026-09-10",
+      schemaVersion: "2026-09-23",
       requestId: "request-123",
       data: reports,
     });
